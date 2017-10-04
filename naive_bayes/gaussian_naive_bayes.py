@@ -28,9 +28,9 @@ class GaussianNB:
     def _calculate_sigma(self, X, y):
         for class_ in set(y):
             t = X[np.array(y) == class_]
-            row_count = t.shape[0]
-            t = (t - self.mu[class_]) ** 2
-            self.sigma[class_] = np.sqrt(np.sum(t, axis=0) / row_count)
+            self.sigma[class_] = np.sqrt(
+                np.sum((t - self.mu[class_]) ** 2, axis=0) / t.shape[0]
+            )
 
     def _calculate_class_prob(self, x, class_):
         epsilon = 10 ** -9
