@@ -37,14 +37,11 @@ class GaussianNB:
             self.sigma[class_] = np.sqrt(np.sum(t, axis=0) / row_count)
 
     def _calculate_class_prob(self, x, class_):
-        p = 1
-        for i in range(len(x)):
-            p *= self._calculate_feature_prob(x, i, class_)
-        return p
-
-    def _calculate_feature_prob(self, x, i, class_):
         epsilon = 10 ** -9
-        mu = self.mu[class_][i]
-        sigma = self.sigma[class_][i] + epsilon
-        p = (x[i] - mu) / sigma
-        return math.exp(p * p / -2) / math.sqrt(2 * math.pi * sigma * sigma)
+        mu = self.mu[class_]
+        sigma = self.sigma[class_] + epsilon
+
+        return np.prod(
+            np.exp(np.power((x - mu) / sigma, 2) / -2) /
+            np.sqrt(2 * math.pi * sigma * sigma)
+        )
