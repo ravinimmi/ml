@@ -26,29 +26,15 @@ class GaussianNB:
 
     def _calculate_mu(self, X, y):
         for class_ in set(y):
-            s = np.zeros(X.shape[1])
-            count = 0.0
-            for j in range(len(X)):
-                if y[j] == class_:
-                    s += X[j]
-                    count += 1
-            self.mu[class_] = s / count
-
-    # def _calculate_mu(self, X, y):
-    #     for class_ in set(y):
-    #         t = X[np.array(y) == class_]
-    #         s = np.dot(np.ones((1, t.shape[0])), t)[0]
-    #         self.mu[class_] = s / t.shape[0]
+            t = X[np.array(y) == class_]
+            self.mu[class_] = np.sum(t, axis=0) / t.shape[0]
 
     def _calculate_sigma(self, X, y):
         for class_ in set(y):
-            t = np.zeros(X.shape[1])
-            count = 0.0
-            for j in range(len(X)):
-                if y[j] == class_:
-                    t += (X[j] - self.mu[class_]) ** 2
-                    count += 1
-            self.sigma[class_] = np.sqrt(t / count)
+            t = X[np.array(y) == class_]
+            row_count = t.shape[0]
+            t = (t - self.mu[class_]) ** 2
+            self.sigma[class_] = np.sqrt(np.sum(t, axis=0) / row_count)
 
     def _calculate_class_prob(self, x, class_):
         p = 1
