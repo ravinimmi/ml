@@ -12,13 +12,7 @@ class GaussianNB:
         self._calculate_sigma(X, y)
 
     def predict(self, X):
-        prob = {}
-        y = []
-        for j in range(len(X)):
-            for class_ in self.mu:
-                prob[class_] = self._calculate_class_prob(X[j], class_)
-            y.append(max(prob, key=prob.get))
-        return y
+        return [self._get_predicted_class(row) for row in X]
 
     def _calculate_mu(self, X, y):
         for class_ in set(y):
@@ -31,6 +25,12 @@ class GaussianNB:
             self.sigma[class_] = np.sqrt(
                 np.sum((t - self.mu[class_]) ** 2, axis=0) / t.shape[0]
             )
+
+    def _get_predicted_class(self, x):
+        prob = {}
+        for class_ in self.mu:
+            prob[class_] = self._calculate_class_prob(x, class_)
+        return max(prob, key=prob.get)
 
     def _calculate_class_prob(self, x, class_):
         epsilon = 10 ** -9
