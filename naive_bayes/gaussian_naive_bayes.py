@@ -6,10 +6,12 @@ class GaussianNB:
     def __init__(self):
         self.mu = {}
         self.sigma = {}
+        self.prior_prob = {}
 
     def fit(self, X, y):
         self._calculate_mu(X, y)
         self._calculate_sigma(X, y)
+        self._calculate_prior_prob(X, y)
 
     def predict(self, X):
         return [self._get_predicted_class(row) for row in X]
@@ -26,10 +28,18 @@ class GaussianNB:
                 np.sum((t - self.mu[class_]) ** 2, axis=0) / t.shape[0]
             )
 
+    def _calculate_prior_prob(self, X, y):
+        for class_ in set(y):
+            self.prior_prob[class_] = (
+                X[np.array(y) == class_].shape[0] / X.shape[0]
+            )
+
     def _get_predicted_class(self, x):
         prob = {}
         for class_ in self.mu:
-            prob[class_] = self._calculate_class_prob(x, class_)
+            prob[class_] = (
+                self.prior_prob[class_] * self._calculate_class_prob(x, class_)
+            )
         return max(prob, key=prob.get)
 
     def _calculate_class_prob(self, x, class_):
