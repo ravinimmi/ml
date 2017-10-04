@@ -6,7 +6,6 @@ class GaussianNB:
     def __init__(self):
         self.mu = {}
         self.sigma = {}
-        self.prob = {}
 
     def fit(self, X, y):
         self._calculate_mu(X, y)
@@ -20,9 +19,6 @@ class GaussianNB:
                 prob[class_] = self._calculate_class_prob(X[j], class_)
             y.append(max(prob, key=prob.get))
         return y
-
-    def score(self, X, y):
-        pass
 
     def _calculate_mu(self, X, y):
         for class_ in set(y):
