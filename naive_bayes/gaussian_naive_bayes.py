@@ -1,5 +1,7 @@
-import numpy as np
 import math
+from decimal import Decimal
+
+import numpy as np
 
 
 class GaussianNB:
@@ -38,7 +40,8 @@ class GaussianNB:
         prob = {}
         for class_ in self.mu:
             prob[class_] = (
-                self.prior_prob[class_] * self._calculate_class_prob(x, class_)
+                Decimal(self.prior_prob[class_]) *
+                self._calculate_class_prob(x, class_)
             )
         return max(prob, key=prob.get)
 
@@ -47,7 +50,9 @@ class GaussianNB:
         mu = self.mu[class_]
         sigma = self.sigma[class_] + epsilon
 
-        return np.prod(
+        p = (
             np.exp(np.power((x - mu) / sigma, 2) / -2) /
             np.sqrt(2 * math.pi * sigma * sigma)
         )
+
+        return np.prod(list(map(Decimal, p)))
